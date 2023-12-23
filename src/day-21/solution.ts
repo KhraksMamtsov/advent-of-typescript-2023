@@ -33,6 +33,12 @@ type WinCombinationFor<X extends TicTacToeChip> =
   | WinColumnsFor<X>
   | WinDiagonalsFor<X>;
 
+type EmptyBoard = [
+  [TicTacToeEmptyCell, TicTacToeEmptyCell, TicTacToeEmptyCell],
+  [TicTacToeEmptyCell, TicTacToeEmptyCell, TicTacToeEmptyCell],
+  [TicTacToeEmptyCell, TicTacToeEmptyCell, TicTacToeEmptyCell],
+];
+
 type YCoord = {
   top: [];
   middle: [0];
@@ -55,10 +61,7 @@ type Coords<Pos extends TicTacToePositions> = Pos extends `${infer YPos extends
       y: YCoord[YPos];
       x: XCoord[XPos];
     }
-  : {
-      y: [];
-      x: [];
-    };
+  : never;
 
 type RowStep<
   Row extends TicTacToeCell[],
@@ -93,6 +96,11 @@ type Step<
         : NextChip[G["state"]];
     }
   : G;
+
+export type NewGame = {
+  board: EmptyBoard;
+  state: "❌";
+};
 
 type EnshureTerminal<G extends TicTacToeGame> =
   G["board"] extends WinCombinationFor<"❌">
