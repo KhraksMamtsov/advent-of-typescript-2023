@@ -211,7 +211,7 @@ type test_draw_expected = {
 
 // type test_draw = Expect<Equal<test_draw_actual, test_draw_expected>>;
 
-test("day-20", () => {
+test("day-23", () => {
   expectTypeOf<test_move1_actual>().toEqualTypeOf<test_move1_expected>();
   expectTypeOf<test_move2_actual>().toEqualTypeOf<test_move2_expected>();
   expectTypeOf<test_move3_actual>().toEqualTypeOf<test_move3_expected>();

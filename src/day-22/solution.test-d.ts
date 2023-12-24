@@ -129,7 +129,7 @@ type test_sudoku_8_actual = Validate<
 >;
 
 // type test_sudoku_8 = Expect<Equal<test_sudoku_8_actual, false>>;
-test("day-20", () => {
+test("day-22", () => {
   expectTypeOf<test_sudoku_1_actual>().toEqualTypeOf<true>();
   expectTypeOf<test_sudoku_2_actual>().toEqualTypeOf<true>();
   expectTypeOf<test_sudoku_3_actual>().toEqualTypeOf<true>();
