@@ -83,23 +83,23 @@ type SetChipOnBoard<
     >
   : R;
 
-type GetColumn<BL extends BoardLike, I extends number> = {
-  [K in keyof BL]: `${BL[K][I]}${K}`;
-};
-
 type CheckWinInDirectionFor<
   BRL extends BoardRowLike,
   C extends Chips,
   R extends Array<Cell> = [],
   L extends number = 0,
-> = BRL extends [infer H extends Cell, ...infer T extends BoardRowLike] //
+> = BRL extends [
+  //
+  infer H extends Cell,
+  ...infer T extends BoardRowLike,
+]
   ? CheckWinInDirectionFor<
       T,
       C,
       [C] extends [H] ? [...R, H] : [],
       L | ([C] extends [H] ? [...R, H]["length"] : 0)
     >
-  : 4 extends L
+  : 4 extends L // 0 | 1 | 2 | 3 | 4 | ...
     ? true
     : false;
 
@@ -113,23 +113,23 @@ type CheckDirectionWinFor<
   : false;
 
 type GetDiagonal<
-  //
-  A extends unknown[][],
-  I extends 0[] = [],
-  R extends unknown[] = [],
-> = A extends [infer H extends unknown[], ...infer T extends unknown[][]]
+  A extends BoardLike,
+  I extends 0[] = [], // начиная с этого индекса
+  R extends BoardRowLike = [],
+> = A extends [infer H extends BoardRowLike, ...infer T extends BoardLike]
   ? GetDiagonal<
       T,
       [...I, 0],
       H[I["length"]] extends undefined ? R : [...R, H[I["length"]]]
     >
   : R;
+
 type GetRevDiagonal<
   //
-  A extends unknown[][],
+  A extends BoardLike,
   I extends 0[] = [],
-  R extends unknown[] = [],
-> = A extends [...infer T extends unknown[][], infer H extends unknown[]]
+  R extends Cell[] = [],
+> = A extends [...infer T extends BoardLike, infer H extends BoardRowLike]
   ? GetRevDiagonal<
       T,
       [...I, 0],
@@ -139,9 +139,9 @@ type GetRevDiagonal<
 
 type GetDiagonals<
   //
-  A extends unknown[][],
+  A extends BoardLike,
   I extends 0[] = [],
-  R extends unknown[][] = [],
+  R extends BoardLike = [],
 > = I["length"] extends A[number]["length"]
   ? R
   : GetDiagonals<
@@ -165,20 +165,21 @@ type Skip<T extends unknown[][], I extends 0[]> = I extends [
     : T
   : T;
 
+type asd = Skip<[[1, 2, 3], [4, 5, 6], [7, 8, 9]], [0]>;
+
 type SetState<
   //
   B extends Board,
   S extends Chips,
 > = {
   board: B;
-  state: [B[number][number]] extends [Chips]
-    ? "Draw"
-    : boolean extends [
-          //
-          CheckDirectionWinFor<B, S>,
-          CheckDirectionWinFor<GetDiagonals<B>, S>,
-        ][number]
-      ? WinnerForState[S]
+  state: boolean extends [
+    CheckDirectionWinFor<B, S>,
+    CheckDirectionWinFor<GetDiagonals<B>, S>,
+  ][number]
+    ? WinnerForState[S]
+    : [B[number][number]] extends [Chips]
+      ? "Draw"
       : NextChip[S];
 };
 
@@ -186,6 +187,6 @@ export type Connect4<
   //
   GS extends GameState,
   Column extends number,
-> = GS["state"] extends Chips //
+> = GS["state"] extends Chips // is terminal state
   ? SetState<SetChipOnBoard<GS["board"], GS["state"], Column>, GS["state"]>
   : GS;

@@ -93,7 +93,7 @@ type FillCookie<
 type FillRowCookie<
   MR extends MazeRow,
   R extends DELICIOUS_COOKIES[] = [],
-> = MR extends [infer H, ...infer Tail extends MazeRow]
+> = MR extends [infer _, ...infer Tail extends MazeRow]
   ? FillRowCookie<Tail, [...R, DELICIOUS_COOKIES]>
   : R;
 
